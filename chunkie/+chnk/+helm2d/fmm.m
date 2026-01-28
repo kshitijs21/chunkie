@@ -64,8 +64,13 @@ switch lower(type)
         srcuse.dipstr = sigma(:).';
         srcuse.dipvec = srcinfo.n(1:2,:);
     case {'freq_diff'}
-        srcuse.dipstr = sigma(:).';
-        srcuse.dipvec = srcinfo.n(1:2,:);
+        [~, ns] = size(srcuse.sources);
+        srcuse.charges = zeros(3,ns);
+        srcuse.charges(1,:) = (srcinfo.r(1,:).*srcinfo.n(1,:) + ...
+                srcinfo.r(2,:).*srcinfo.n(2,:)).*(sigma(:).');
+        srcuse.charges(2,:) = srcinfo.n(1,:).*(sigma(:).');
+        srcuse.charges(3,:) = srcinfo.n(2,:).*(sigma(:).');
+        srcuse.nd = 3;
     case {'c', 'cprime'}
         coefs = varargin{1};
         srcuse.charges = coefs(2)*sigma(:).';
@@ -90,8 +95,12 @@ U = hfmm2d(eps, zk, srcuse, pg, targuse, pgt);
 % Assign potentials
 if ( nargout > 0 )
     switch lower(type)
-        case {'s', 'd', 'c', 'freq_diff'}
+        case {'s', 'd', 'c'}
             varargout{1} = U.pottarg.';
+        case {'freq_diff'}
+            pot = -U.pottarg(1,:) + U.pottarg(2,:).*targuse(1,:) + ...
+                   U.pottarg(3,:).*targuse(2,:);
+            varargout{1} = zk*pot.';
         case {'sprime', 'dprime', 'cprime','sp','dp','cp'}
             if ( ~isfield(targinfo, 'n') )
                 error('CHUNKIE:helm2d:fmm:normals', ...
