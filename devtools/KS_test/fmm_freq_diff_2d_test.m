@@ -91,7 +91,7 @@ clear;
 rad = 1; ctr = [0.0;0.0];
 circfun = @(t) ctr + rad*[cos(t(:).');sin(t(:).')];
 
-h = 1;
+h = 4383;
 rmax = 2/h;
 nch = max(10, ceil(2*pi/rmax) + 2);  %%% number of panels
 
@@ -101,7 +101,7 @@ pref = [];
 pref.nchmax = 20000;
 
 chnkr = chunkerfuncuni(circfun, nch, optss, pref);
-plot(chnkr, 'k.');
+% plot(chnkr, 'k.');
 
 %%% Defining the sources %%%
 
@@ -126,15 +126,23 @@ xx = chnkr.r(1,:); yy = chnkr.r(2,:);
 v = (xx - yy.^3 + xx.^2).*cos(-yy) + sin(yy).*(xx.^5 + xx);
 zk = 2.41;
 
+start1 = tic;
 dkern = kernel('helmholtz','freq_diff',zk);
 opts = [];
 opts.corrections = true;
+t1 = toc(start1);
 % cormat = chunkermat(chnkr,dkern,opts);
 cormat = chunkermat(chnkr, dkern, opts);
+t1 = toc(start1);
+start2 = tic;
 opts = [];
 opts.forcesmooth = true;
 opts.cormat = cormat;
 u_eval = chunkerkerneval(chnkr, dkern, v.', chnkr, opts);
+t2 = toc(start2);
+fprintf('nch = %d, t1 = %d, t2 = %d, t2/t1 = %d', nch, t1, t2, t2/t1)
+
+return
 
 h = 1e-3;
 hh = h./(1:1:100);
@@ -152,10 +160,16 @@ for ii = 1:length(hh)
     err1(ii) = norm(Ap*(v.') - An*(v.'));
 end
 
-
-figure, loglog(1:1:length(hh), err, 'k.');      % error is of order 100*h^2
-hold on; loglog(1:1:length(hh), hh.^2, 'r.'); 
-figure, loglog(1:1:length(hh), err1, 'm.');      % error is of order 100*h^2
-hold on; loglog(1:1:length(hh), hh, 'b.'); 
+% 
+% figure, loglog(1:1:length(hh), err, 'k.');      % error is of order 100*h^2
+% hold on; loglog(1:1:length(hh), hh.^2, 'r.'); 
+% figure, loglog(1:1:length(hh), err1, 'm.');      % error is of order 100*h^2
+% hold on; loglog(1:1:length(hh), hh, 'b.'); 
 % figure, loglog(1:1:length(hh), err1, 'b.'); 
 % hold on; loglog(1:1:length(hh), 100*hh.^3, 'm.');     % error is of order 100*h^3  
+
+% Observations:
+% 1. The rate of convergence in the Central Difference test is passed at
+%    the Layer Potential level as well.
+% 2. The time ratio of t_2/t_1 is of the order nch/4, where nch is the
+%    number of panels on the chunker.
