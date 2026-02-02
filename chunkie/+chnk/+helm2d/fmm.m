@@ -71,6 +71,17 @@ switch lower(type)
         srcuse.charges(2,:) = srcinfo.n(1,:).*(sigma(:).');
         srcuse.charges(3,:) = srcinfo.n(2,:).*(sigma(:).');
         srcuse.nd = 3;
+   case {'fd_s'}
+       [~, ns] = size(srcuse.sources); 
+       srcuse.dipvec = zeros(3,2,ns);
+       srcuse.dipvec(1,1:2,:) = srcinfo.r(1:2,:);
+       srcuse.dipvec(2,1:2,:) = [ones(1,ns); zeros(1,ns)];
+       srcuse.dipvec(3,1:2,:) = [zeros(1,ns); ones(1,ns)];
+       srcuse.nd = 3;
+       srcuse.dipstr = zeros(3,ns);
+       srcuse.dipstr(1,:) = sigma(:).';
+       srcuse.dipstr(2,:) = sigma(:).';
+       srcuse.dipstr(3,:) = sigma(:).';
     case {'c', 'cprime'}
         coefs = varargin{1};
         srcuse.charges = coefs(2)*sigma(:).';
@@ -101,6 +112,10 @@ if ( nargout > 0 )
             pot = -U.pottarg(1,:) + U.pottarg(2,:).*targuse(1,:) + ...
                    U.pottarg(3,:).*targuse(2,:);
             varargout{1} = zk*pot.';
+        case {'fd_s'}
+            pot = -U.pottarg(1,:) + U.pottarg(2,:).*targuse(1,:) + ...
+                   U.pottarg(3,:).*targuse(2,:);
+            varargout{1} = -(1/zk)*pot.';
         case {'sprime', 'dprime', 'cprime','sp','dp','cp'}
             if ( ~isfield(targinfo, 'n') )
                 error('CHUNKIE:helm2d:fmm:normals', ...
