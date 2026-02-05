@@ -90,8 +90,8 @@ if strcmpi(type,'d_diff')
   submat = -(grad(:,:,1).*nx + grad(:,:,2).*ny);
 end
 
-% double layer (frequency difference)
-if strcmpi(type,'freq_diff')
+% double layer (frequency derivative)
+if strcmpi(type,'fd_d')
     [~,ns] = size(src);
     [~,nt] = size(targ);
 
@@ -108,11 +108,11 @@ if strcmpi(type,'freq_diff')
     val = chnk.helm2d.green(zk,src,targ);
     nx = repmat(srcnorm(1,:),nt,1);
     ny = repmat(srcnorm(2,:),nt,1);
-    submat = zk*val.*( (rx.*nx) + (ry.*ny) ); % grad(:,:,2).*ny);
+    submat = zk*val.*( (rx.*nx) + (ry.*ny) );
 end
 
 
-% single layer (frequency difference)
+% single layer (frequency derivative)
 if strcmpi(type,'fd_s')
     [~,ns] = size(src);
     [~,nt] = size(targ);
@@ -136,6 +136,54 @@ if strcmpi(type,'fd_s')
     submat = -0.25*1i*besselh(1,1,zk*r).*r;
 end
 
+
+% normal derivative of single layer (frequency derivative)
+if strcmpi(type,'fd_sprime')
+    targnorm = targinfo.n(:,:);
+
+    [~,ns] = size(src);
+    [~,nt] = size(targ);
+
+    xs = repmat(src(1,:),nt,1);
+    ys = repmat(src(2,:),nt,1);
+
+    xt = repmat(targ(1,:).',1,ns);
+    yt = repmat(targ(2,:).',1,ns);
+
+    rx = xt-xs;
+    ry = yt-ys;
+
+    val = chnk.helm2d.green(zk,src,targ);
+    nx = repmat((targnorm(1,:)).',1,ns);
+    ny = repmat((targnorm(2,:)).',1,ns);
+    submat = -zk*val.*( (rx.*nx) + (ry.*ny) );
+end
+
+% normal derivative of double layer (frequency derivative)
+if strcmpi(type,'fd_dprime')
+    targnorm = targinfo.n(:,:);
+    srcnorm = srcinfo.n(:,:);
+    [val, grad] = chnk.helm2d.green(zk,src,targ);
+    nxsrc = repmat(srcnorm(1,:),nt,1);
+    nysrc = repmat(srcnorm(2,:),nt,1);
+    gd = -(grad(:,:,1).*nxsrc + grad(:,:,2).*nysrc);
+
+    [~,ns] = size(src);
+    [~,nt] = size(targ);
+
+    xs = repmat(src(1,:),nt,1);
+    ys = repmat(src(2,:),nt,1);
+
+    xt = repmat(targ(1,:).',1,ns);
+    yt = repmat(targ(2,:).',1,ns);
+
+    rx = xt-xs;
+    ry = yt-ys;
+
+    nxtarg = repmat((targnorm(1,:)).',1,ns);
+    nytarg = repmat((targnorm(2,:)).',1,ns);
+    submat = -zk*gd.*(rx.*nxtarg + ry.*nytarg) + zk*val.*(nxtarg.*nxsrc + nytarg.*nysrc);
+end
 
 % normal derivative of single layer
 if strcmpi(type,'sprime')
