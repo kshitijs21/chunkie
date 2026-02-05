@@ -60,10 +60,12 @@ srcuse.sources = srcinfo.r(1:2,:);
 switch lower(type)
     case {'s', 'sprime'}
         srcuse.charges = sigma(:).';
+
     case {'d', 'dprime'}
         srcuse.dipstr = sigma(:).';
         srcuse.dipvec = srcinfo.n(1:2,:);
-    case {'freq_diff'}
+        
+    case {'fd_d'}
         [~, ns] = size(srcuse.sources);
         srcuse.charges = zeros(3,ns);
         srcuse.charges(1,:) = (srcinfo.r(1,:).*srcinfo.n(1,:) + ...
@@ -71,6 +73,7 @@ switch lower(type)
         srcuse.charges(2,:) = srcinfo.n(1,:).*(sigma(:).');
         srcuse.charges(3,:) = srcinfo.n(2,:).*(sigma(:).');
         srcuse.nd = 3;
+        
    case {'fd_s'}
        [~, ns] = size(srcuse.sources); 
        srcuse.dipvec = zeros(3,2,ns);
@@ -82,6 +85,37 @@ switch lower(type)
        srcuse.dipstr(1,:) = sigma(:).';
        srcuse.dipstr(2,:) = sigma(:).';
        srcuse.dipstr(3,:) = sigma(:).';
+
+    case {'fd_sprime'}
+        [~, ns] = size(srcuse.sources);
+        srcuse.charges = zeros(3,ns);
+        srcuse.charges(1,:) = sigma(:).';
+        srcuse.charges(2,:) = srcinfo.r(1,:).*(sigma(:).');
+        srcuse.charges(3,:) = srcinfo.r(2,:).*(sigma(:).');
+        srcuse.nd = 3;   
+
+   case {'fd_dprime'}
+       [~, ns] = size(srcuse.sources); 
+       srcuse.dipvec = zeros(5,2,ns);
+       srcuse.dipvec(1,1:2,:) = srcinfo.n(1:2,:);
+       srcuse.dipvec(2,1:2,:) = srcinfo.n(1:2,:);
+       srcuse.dipvec(3,1:2,:) = srcinfo.n(1:2,:);
+       srcuse.dipvec(4,1:2,:) = srcinfo.n(1:2,:);
+       srcuse.dipvec(5,1:2,:) = srcinfo.n(1:2,:);
+       srcuse.nd = 5;
+       srcuse.dipstr = zeros(5,ns);
+       srcuse.dipstr(1,:) = sigma(:).';
+       srcuse.dipstr(2,:) = srcinfo.r(1,:).*(sigma(:).');
+       srcuse.dipstr(3,:) = srcinfo.r(2,:).*(sigma(:).');
+       srcuse.dipstr(4,:) = 0*(sigma(:).');
+       srcuse.dipstr(5,:) = 0*(sigma(:).');
+       srcuse.charges = zeros(5,ns);
+       srcuse.charges(1,:) = 0*(sigma(:).');
+       srcuse.charges(2,:) = 0*(sigma(:).');
+       srcuse.charges(3,:) = 0*(sigma(:).');
+       srcuse.charges(4,:) = srcinfo.n(1,:).*(sigma(:).');
+       srcuse.charges(5,:) = srcinfo.n(2,:).*(sigma(:).');
+       
     case {'c', 'cprime'}
         coefs = varargin{1};
         srcuse.charges = coefs(2)*sigma(:).';
@@ -108,7 +142,7 @@ if ( nargout > 0 )
     switch lower(type)
         case {'s', 'd', 'c'}
             varargout{1} = U.pottarg.';
-        case {'freq_diff'}
+        case {'fd_d'}
             pot = -U.pottarg(1,:) + U.pottarg(2,:).*targuse(1,:) + ...
                    U.pottarg(3,:).*targuse(2,:);
             varargout{1} = zk*pot.';
@@ -116,6 +150,24 @@ if ( nargout > 0 )
             pot = -U.pottarg(1,:) + U.pottarg(2,:).*targuse(1,:) + ...
                    U.pottarg(3,:).*targuse(2,:);
             varargout{1} = -(1/zk)*pot.';
+        case {'fd_sprime'}
+            if ( ~isfield(targinfo, 'n') )
+                error('CHUNKIE:helm2d:fmm:normals', ...
+                    'Targets require normal info when evaluating Helmholtz kernel ''%s''.', type);
+            end
+            pot = -U.pottarg(1,:).*(targuse(1,:).*targinfo.n(1,:) + ...
+                        targuse(2,:).*targinfo.n(2,:))...
+                  + U.pottarg(2,:).*targinfo.n(1,:) + U.pottarg(3,:).*targinfo.n(2,:);
+            varargout{1} = zk*pot.';
+        case {'fd_dprime'}
+            if ( ~isfield(targinfo, 'n') )
+                error('CHUNKIE:helm2d:fmm:normals', ...
+                    'Targets require normal info when evaluating Helmholtz kernel ''%s''.', type);
+            end
+            pot = -U.pottarg(1,:).*(targuse(1,:).*targinfo.n(1,:) + targuse(2,:).*targinfo.n(2,:))...
+                  + U.pottarg(2,:).*targinfo.n(1,:) + U.pottarg(3,:).*targinfo.n(2,:)...
+                  + U.pottarg(4,:).*targinfo.n(1,:) + U.pottarg(5,:).*targinfo.n(2,:);
+            varargout{1} = zk*pot.';
         case {'sprime', 'dprime', 'cprime','sp','dp','cp'}
             if ( ~isfield(targinfo, 'n') )
                 error('CHUNKIE:helm2d:fmm:normals', ...
