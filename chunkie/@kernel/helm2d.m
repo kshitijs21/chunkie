@@ -3,14 +3,23 @@ function obj = helm2d(type, zk, coefs)
 %   KERNEL.HELM2D('s', ZK) or KERNEL.HELM2D('single', ZK) constructs the
 %   single-layer Helmholtz kernel with wavenumber ZK.
 %
+%   KERNEL.HELM2D('fd_s', ZK) or KERNEL.HELM2D('fd_s', ZK) constructs the
+%   frequency derivative single-layer Helmholtz kernel with wavenumber ZK.
+%
 %   KERNEL.HELM2D('d', ZK) or KERNEL.HELM2D('double', ZK) constructs the
 %   double-layer Helmholtz kernel with wavenumber ZK.
 %
-%   KERNEL.HELM2D('freq_diff', ZK) or KERNEL.HELM2D('freq_diff', ZK) constructs the
+%   KERNEL.HELM2D('fd_d', ZK) or KERNEL.HELM2D('fd_d', ZK) constructs the
 %   frequency derivative double-layer Helmholtz kernel with wavenumber ZK.
 %
 %   KERNEL.HELM2D('sp', ZK) or KERNEL.HELM2D('sprime', ZK) constructs the
 %   derivative of the single-layer Helmholtz kernel with wavenumber ZK.
+%
+%   KERNEL.HELM2D('fd_sprime', ZK) or KERNEL.HELM2D('fd_sprime', ZK) constructs the
+%   frequency derivative Sprime(S') Helmholtz kernel with wavenumber ZK.
+%
+%   KERNEL.HELM2D('fd_dprime', ZK) or KERNEL.HELM2D('fd_dprime', ZK) constructs the
+%   frequency derivative Dprime(D') Helmholtz kernel with wavenumber ZK.
 %
 %   KERNEL.HELM2D('c', ZK, COEFS) or KERNEL.HELM2D('combined', ZK, COEFS)
 %   constructs the combined-layer Helmholtz kernel with wavenumber ZK and
@@ -60,16 +69,28 @@ switch lower(type)
         obj.splitinfo.action = {'r','r','r'};
         obj.splitinfo.functions = @(s,t) helm2d_d_split(zk,s,t);
 
-    case {'freq_diff'}
-        obj.type = 'freq_diff';
-        obj.eval = @(s,t) chnk.helm2d.kern(zk, s, t, 'freq_diff');
-        obj.fmm  = @(eps,s,t,sigma) chnk.helm2d.fmm(eps, zk, s, t, 'freq_diff', sigma);
+    case {'fd_d'}
+        obj.type = 'fd_d';
+        obj.eval = @(s,t) chnk.helm2d.kern(zk, s, t, 'fd_d');
+        obj.fmm  = @(eps,s,t,sigma) chnk.helm2d.fmm(eps, zk, s, t, 'fd_d', sigma);
         obj.sing = 'log';
 
     case {'fd_s'}
         obj.type = 'fd_s';
         obj.eval = @(s,t) chnk.helm2d.kern(zk, s, t, 'fd_s');
         obj.fmm  = @(eps,s,t,sigma) chnk.helm2d.fmm(eps, zk, s, t, 'fd_s', sigma);
+        obj.sing = 'log';
+
+    case {'fd_sprime'}
+        obj.type = 'fd_sprime';
+        obj.eval = @(s,t) chnk.helm2d.kern(zk, s, t, 'fd_sprime');
+        obj.fmm  = @(eps,s,t,sigma) chnk.helm2d.fmm(eps, zk, s, t, 'fd_sprime', sigma);
+        obj.sing = 'log';
+
+    case {'fd_dprime'}
+        obj.type = 'fd_dprime';
+        obj.eval = @(s,t) chnk.helm2d.kern(zk, s, t, 'fd_dprime');
+        obj.fmm  = @(eps,s,t,sigma) chnk.helm2d.fmm(eps, zk, s, t, 'fd_dprime', sigma);
         obj.sing = 'log';
 
     case {'sp', 'sprime'}
