@@ -1,12 +1,14 @@
 clear;
 func = 'ir';
-method = 'c';
+method = 's';
 opts = [];
 opts.nd = 1;
 
+
+
 fprintf('Objective funtion = %s\n', func);
 
-ll = [2 2.6 3];
+ll = [2];
 % nh = [12 16 24];
 del = [0.05 0.1 0.2];
 z00 = 3.235377405;
@@ -27,7 +29,7 @@ switch lower(method)
               opts.cheb1 = a; opts.cheb2 = b;
               
               [zero0, val0, f, rts] = zeros_fred_opti(func, method, chnkr, opts);
-              save([ 'Parameter_new_Chebysheff_' char(func) '_with_' num2str(nh) '_holes_on_interval_[' num2str(a) ',' num2str(b) '].mat'], 'rts', 'zero0','val0','f');
+              save([ 'Chebyshev_Parameter/Parameter_terminal_new_Chebysheff_' char(func) '_with_' num2str(nh) '_holes_on_interval_[' num2str(a) ',' num2str(b) '].mat'], 'rts', 'zero0','val0','f');
               
               [aa,bb] = size(rts);
               if (aa >=1) && (bb>=1)
@@ -62,7 +64,7 @@ switch lower(method)
                nholes(ii,jj) = nh;
                zzit = valit(1,:);
                yyit = valit(2,:);
-               save(['Parameter_Complex_Muller_' char(func) '_iterates_with_' num2str(nh) '_holes_and_initial_guess_(' num2str(cguess(1)) ', ' num2str(cguess(2)) ', ' num2str(cguess(3)) ').mat'], 'zero0', 'val0', 'nit', 'timE', 'zzit', "yyit");   
+               save(['Complex_Muller_Parameter/Parameter_terminal_Complex_Muller_' char(func) '_iterates_with_' num2str(nh) '_holes_and_initial_guess_(' num2str(cguess(1)) ', ' num2str(cguess(2)) ', ' num2str(cguess(3)) ').mat'], 'zero0', 'val0', 'nit', 'timE', 'zzit', "yyit");   
                fprintf('  del = %d, Root = %d, fn value = %d, iterations = %d, #fn eval = %d, time = %d \n', delta, zero0, val0, nit, nit +3, tt);
             end
             z00 = zero0;
@@ -90,7 +92,7 @@ switch lower(method)
                zzit = valit(1,:);
                yyit = valit(2,:);
                derit = valit(3,:);
-               save(['Parameter_new_Newton_' char(func) '_iterates_with_' num2str(nh) '_holes_and_initial_guess_' num2str(aa) '.mat'], 'zero0', 'val0', 'nit', 'timE', 'zzit', "yyit", "derit");   
+               save(['Newton_Parameter/Parameter_terminal_new_Newton_' char(func) '_iterates_with_' num2str(nh) '_holes_and_initial_guess_' num2str(aa) '.mat'], 'zero0', 'val0', 'nit', 'timE', 'zzit', "yyit", "derit");   
                fprintf('  Root = %d, fn value = %d, iterations = %d, time = %d \n', zero0, val0, nit, timE);
            
             z00 = zero0;
@@ -120,7 +122,7 @@ switch lower(method)
                nholes(ii,jj) = nh;
                zzit = valit(1,:);
                yyit = valit(2,:);
-               save(['Parameter_new_Secant_' char(func) '_iterates_with_' num2str(nh) '_holes_and_initial_guess_(' num2str(sguess(1)) ', ' num2str(sguess(2)) ').mat'], 'zero0', 'val0', 'nit', 'timE', 'zzit', "yyit");   
+               save(['Secant_Parameter/Parameter_terminal_new_Secant_' char(func) '_iterates_with_' num2str(nh) '_holes_and_initial_guess_(' num2str(sguess(1)) ', ' num2str(sguess(2)) ').mat'], 'zero0', 'val0', 'nit', 'timE', 'zzit', "yyit");   
                fprintf('  del = %d, Root = %d, fn value = %d, iterations = %d, # fn eval = %d, time = %d \n', delta, zero0, val0, nit, nit +2, timE);
             end
             z00 = zero0;
