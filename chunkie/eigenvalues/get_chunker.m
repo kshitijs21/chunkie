@@ -2,18 +2,38 @@ function [chnkr, nholes] = get_chunker(j)
 rad = 1; ctr = [0.0;0.0];
 circfun = @(t) ctr + rad*[cos(t(:).');sin(t(:).')];
 
+
+
+l = j;
+k = 1/(4*l);
+h = 5*l; 
+
+rmax = 2/h;
+nch = max(10, ceil(2*pi/rmax) + 2);
+
 opts = [];
-opts.maxchunklen = 0.5;
-pref = []; pref.nchmax = 100000;
-chnkr1 = chunkerfunc(circfun, opts, pref);
+opts.maxchunklen = 1.1;
+pref = []; pref.nchmax = 20000;
+
+chnkr1 = chunkerfuncuni(circfun, nch, opts, pref);
 plot(chnkr1, 'k.');
+chnkreps = chnkr1;
+
+
+
+
+% opts = [];
+% opts.maxchunklen = 1.1;
+% pref = []; 
+% pref.nchmax = 100000;
+% chnkr1 = chunkerfunc(circfun, opts, pref);
 
 l = j;
 chnkreps = chnkr1;
 nh = 0;
 k = 1/(4 * l); 
 h = 5 * l;
-chunkerhole0 = k * chnkr1;
+chunkerhole0 = k*chunkerfuncuni(circfun, 6);
 chunkerhole0 = chunkerhole0.reverse();
 for i = 0 : l-1
     for j = 0 : l-1
@@ -38,4 +58,6 @@ for i = 0 : l-1
  end
     chnkr = chnkreps;
     nholes = nh;
+    
+    plot(chnkr, 'k.');
 end

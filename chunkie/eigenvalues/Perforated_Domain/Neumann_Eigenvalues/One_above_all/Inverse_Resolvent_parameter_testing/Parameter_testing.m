@@ -8,13 +8,13 @@ opts.nd = 1;
 
 fprintf('Objective funtion = %s\n', func);
 
-ll = [2];
+ll = [2.6];
 % nh = [12 16 24];
 del = [0.05 0.1 0.2];
-z00 = 3.235377405;
+%z00 = 3.235377405;
 % z00 = 3.44976;
 % z00 = 3.441582096927;
-% z00 = 3.4497637315;
+z00 = 3.4497637315;
 switch lower(method)
     case {'c', 'cheb', 'chebyshev'}
         fprintf('Root Finding Algorithm = Chebyshev \n');

@@ -5,21 +5,22 @@ xx = chnkr.r(1,:);
 yy = chnkr.r(2,:);
 func = 'ir';
 method = 'c';
-z00 = 3.235377405;
-a = 3.235377405 - 0.2;
-b = 3.235377405 + 0.2;
-opts = [];
-opts.nd = 4;
-opts.cheb1 = a;
-opts.cheb2 = b;
 
-opts.newtguess = 2.8;
-opts.secguess = [2.8 2.9];
-opts.cmguess = [2.7 2.8 2.9];
-xz = fred_opti(zk, chnkr, func, opts);
-[zero0, val, nit, rts] = zeros_fred_opti(func, method, chnkr, opts);
- 
-return
+% z00 = 3.235377405;
+% a = 3.235377405 - 0.2;
+% b = 3.235377405 + 0.2;
+% opts = [];
+% opts.nd = 4;
+% opts.cheb1 = a;
+% opts.cheb2 = b;
+% 
+% opts.newtguess = 2.8;
+% opts.secguess = [2.8 2.9];
+% opts.cmguess = [2.7 2.8 2.9];
+% xz = fred_opti(zk, chnkr, func, opts);
+% [zero0, val, nit, rts] = zeros_fred_opti(func, method, chnkr, opts);
+% 
+% return
 
 % rr = rand(length(xx),1);
 % rrr = rand(length(xx),1);
@@ -37,10 +38,13 @@ return
 % rr = -1+2*rand(6,1);
 % rr2 = -1 + 2*rand(3,1);
 % 
-% uu = @(x,y) (rr(1) + rr(2)*x + rr(3)*y + rr(4)*x.^2 + rr(5)*x.*y + rr(6).*y.^2).*sin(x+ rr2(1) + rr2(2)*x + rr2(3)*y);
-% for ii = 2:2
-%     u = uu(xx,yy);
-% end
+ rr = 1 + rand(6,1);
+        
+        uu = @(x, y) (rr(1)*x + rr(2)*y + rr(3)*(x.*y) + rr(4)*x.^2 + rr(5)*y.^2 + rr(6)) .* sin(pi*x*rr(1)) ;
+        
+        for ii = 2:2
+            u = uu(xx,yy);
+        end
 
 %%%% 
 % rr = rand(6,1);
