@@ -1,10 +1,17 @@
-function obj = ostok2d(type, zk)
-%KERNEL.STOK2D   Construct the Stokes kernel.
-%   KERNEL.STOK2D('svel', MU) or KERNEL.ELAST2D('svelocity', MU)
-%   constructs the single-layer Stokes kernel for velocity with viscosity
-%   MU. KERNEL.STOK2D('s', MU) and KERNEL.STOK2D('single', MU) are
-%   equivalent.
-%
+function obj = ostok2d(type, zk, coefs)
+%KERNEL.OSTOK2D   Construct the Stokes kernel.
+% KERNEL.OSTOK2D('dvel', zk) 
+%   constructs the single-layer Oscillatory Stokes kernel for velocity with
+%   viscosity zk. KERNEL.OSTOK2D('s', zk) and KERNEL.OSTOK2D('single', zk) 
+%   are equivalent.
+% KERNEL.OSTOK2D('dvel', zk) 
+%   constructs the Double-layer Oscillatory Stokes kernel for velocity with
+%   viscosity zk. KERNEL.OSTOK2D('d', zk) and KERNEL.OSTOK2D('double', zk) 
+%   are equivalent.
+% KERNEL.OSTOK2D('cvel', zk, coefs) 
+%   constructs the Combined field Oscillatory Stokes kernel for velocity 
+%   with viscosity zk and coefs. KERNEL.OSTOK2D('c', zk, coefs) and 
+%   KERNEL.OSTOK2D('comb', zk, coefs) are equivalent. 
 %
 % See also CHNK.OSTOK2D.KERN.
 
@@ -22,9 +29,7 @@ obj = kernel();
 obj.name = 'ostokes';
 obj.params.zk = zk;
 
-
 switch lower(type)
-
     case {'svel', 'svelocity', 's', 'single'}
         obj.type = 'svel';
         obj.eval = @(s,t) chnk.ostok2d.kern(zk, s, t, 's');
@@ -37,23 +42,21 @@ switch lower(type)
         obj.fmm = [];
         obj.opdims = [2, 2];
         obj.sing = 'log';
-
-    case {'sp', 'sprime'}
-        obj.type = 'sp';
-        obj.eval = @(s,t) chnk.ostok2d.kern(zk, s, t, 'sp');
+    case {'cvel', 'cvelocity', 'c', 'combined'}
+        if ( nargin < 2 )
+            warning(['Missing combined layer parameter coefs. ' ...
+                'Defaulting to [1 1].']);
+            coefs = ones(2,1);
+        end
+        obj.type = 'cvel';
+        obj.params.coefs = coefs;
+        obj.eval = @(s,t) coefs(1)*chnk.ostok2d.kern(zk, s, t, 'd') + ...
+                          coefs(2)*chnk.ostok2d.kern(zk, s, t, 's');
         obj.fmm = [];
         obj.opdims = [2, 2];
         obj.sing = 'log';
-
-    case {'sinkv', 'sink-vel'}
-        obj.type = 'sinkv';
-        obj.eval = @(s,t) chnk.ostok2d.kern(zk, s, t, 'sinkv');
-        obj.fmm = [];
-        obj.opdims = [2, 1];
-        obj.sing = 'log';
     otherwise
         error('Unknown Oscillatory Stokes kernel type ''%s''.', type);
-
 end
 
 icheck = exist(['fmm2d.' mexext], 'file');

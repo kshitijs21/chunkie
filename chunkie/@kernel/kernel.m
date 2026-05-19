@@ -26,6 +26,7 @@ classdef kernel
 %         ('axissymhdiff', 'axissymhelmdiff') 
 %      'quasiperiodic helmholtz'                    's', 'd', 'sp', 'dp', 'c'
 %         ('helmquas', 'hq')                        'cp'
+%      'ostokes'     ('ostok', 'os')                's', 'd', 'c'
 %   The types may also be written in longer form, e.g. 'single', 'double',
 %   'sprime', 'combined', 'svelocity', 'spressure', 'straction',
 %   'dvelocity', 'dpressure', 'dtraction'.
