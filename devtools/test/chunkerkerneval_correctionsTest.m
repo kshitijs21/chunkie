@@ -70,9 +70,6 @@ u_eval = chunkerkerneval(chnkr,dkern,sol,targets,opts);
 
 assert(norm(utrue-u_eval,inf)>1e-10)
 
-
-
-
 end
 
 

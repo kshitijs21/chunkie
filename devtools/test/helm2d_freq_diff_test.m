@@ -15,7 +15,7 @@ clear;
 % hold on; loglog(zk, 8*(h0./zk).^2, 'b.');
 % return
 
-%%%%%%%%%% TEST FOR THE freq_diff %%%%%%%%%%%
+%%%%%%%%%% TEST FOR THE fd_d %%%%%%%%%%%
 
 chnkr = get_chunker(1);
 zk = 1:0.1:10;
@@ -29,7 +29,7 @@ for i = 1:length(zk)
      Ap = chunkermat(chnkr, Dp);
      Dm = kernel('helm', 'd', zz - h);
      Am = chunkermat(chnkr, Dm);
-     Freqk = zz*kernel('helm', 'freq_diff', zz);
+     Freqk = zz*kernel('helm', 'fd_d', zz);
      Ak = chunkermat(chnkr, Freqk); 
      err1(i) = norm(Ap - Am);
      % err(i) = norm((1/h)*(Ap - Am) - 2*Ak);
@@ -43,7 +43,7 @@ hold on; loglog(zk, (h0./zk).^2, 'b.');
 
 % zk = 0:0.01:1;
 % Dk = kernel('helm', 'd', 3);  
-% Freqk = kernel('helm', 'freq_diff', 3);
+% Freqk = kernel('helm', 'fd_d', 3);
 % Ak = chunkermat(chnkr, Dk);  
 % Fk = chunkermat(chnkr, Freqk);
 % for i = 1:length(zk)
@@ -51,7 +51,7 @@ hold on; loglog(zk, (h0./zk).^2, 'b.');
 %     Ap = chunkermat(chnkr, Dk); 
 %     Dm = kernel('helm', 'd', 3 - zk(i));
 %     Am = chunkermat(chnkr, Dk);
-%     Freq = kernel('helm', 'freq_diff', 3 + zk(i));
+%     Freq = kernel('helm', 'fd_d', 3 + zk(i));
 %     F = chunkermat(chnkr, Freqk);
 % end
 % %%

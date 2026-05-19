@@ -1,4 +1,4 @@
-function [val,grad,hess,der3,der4] = green(k,src,targ)
+function [val,grad,hess,der3,der4, g0,g1,g21,g3,g4] = green(k,src,targ)
 % GREEN FUNCTION EVALUATION FOR OSCILATORY BIHARMONIC OPERATOR   
 % bilaplcain(u) + k^2 laplacian(u) = 0
 %
@@ -71,6 +71,16 @@ if nargout > 2
     hess(:,:,1) = l*dx2.*g21.*rm2 + l*g1.*rm1;
     hess(:,:,2) = l*dx.*dy.*g21.*rm2;
     hess(:,:,3) = l*dy2.*g21.*rm2 + l*g1.*rm1;
+
+    
+% fprintf('checking starts\n');
+%     hessf(:,:,1) = dx2.*g21.*rm2 +g1.*rm1;
+%     hessf(:,:,2) = dx.*dy.*g21.*rm2;
+%     hessf(:,:,3) = dy2.*g21.*rm2+g1.*rm1;
+%     norm(hessf(:,:,1) - hess(:,:,1))
+%     norm(hessf(:,:,2) - hess(:,:,2))
+%     norm(hessf(:,:,3) - hess(:,:,3))
+%     fprintf('checking ends\n');
 end
 if nargout > 3
     der3(:,:,1) = l*(dx3.*g3+3*dy2.*dx.*g21.*rm1).*rm3;
@@ -185,17 +195,15 @@ cf1 = cf1(:).*(fac(:)-1); cf2 = cf2(:).*(fac(:)-1);
 j0m1d4 = chnk.helm2d.even_pseval(cf1,rsus).*rm2;
 fd4 = chnk.helm2d.even_pseval(cf2,rsus).*rm2;
 
-% cf1 = cf1(:).*(fac(:)-2); cf1 = cf1(2:end);
-% cf2 = cf2(:).*(fac(:)-2); cf2 = cf2(2:end);
-% j0m1d5 = chnk.helm2d.even_pseval(cf1,rsus).*rm1;
-% fd5 = chnk.helm2d.even_pseval(cf2,rsus).*rm1;
 
 % combine to get derivative of i/4 H + log/(2*pi)
 r2fac = -(1-r2logrfac)*k*k*0.25;
 g0(isus) = const1*(j0m1+1+r2fac*rsus.*rsus) - o2p*(f  + logr.*j0m1);
-g1(isus) = const1*(j0m1d1+2*r2fac*rsus) - o2p*(fd1 + logr.*j0m1d1 + j0m1.*rm1);
-g21(isus) = const1*(j0m1d2-j0m1d1.*rm1) - o2p*(fd21 + logr.*(j0m1d2-j0m1d1.*rm1) +...
-     2*j0m1d1.*rm1 - 2*j0m1.*rm2);
+g1(isus) = const1*(j0m1d1+2*r2fac*rsus) - ...
+                o2p*(fd1 + logr.*j0m1d1 + j0m1.*rm1);
+g21(isus) = const1*(j0m1d2-j0m1d1.*rm1) ...
+            - o2p*(fd21 + logr.*(j0m1d2-j0m1d1.*rm1) + 2*j0m1d1.*rm1 ...
+            - 2*j0m1.*rm2);
 g3(isus) = const1*j0m1d3 - o2p*(fd3 + logr.*j0m1d3 + 3*j0m1d2.*rm1 - ...
     3*j0m1d1.*rm2 + 2*j0m1.*rm3);
 g4(isus) = const1*j0m1d4 - o2p*(fd4 + logr.*j0m1d4 + 4*j0m1d3.*rm1 - ...

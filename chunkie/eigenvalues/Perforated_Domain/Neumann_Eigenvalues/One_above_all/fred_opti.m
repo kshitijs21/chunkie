@@ -74,11 +74,12 @@ opts_flam = [];
 opts_flam.flamtype = 'rskelf';
 opts_flam.forceproxy = true;
 opts_flam.occ = 200;
+opts_flam.verbose = true;
 
 switch lower(func)
     case {'f', 'fred', 'fredholm_determinant'}
         Dk = 2*kernel('helm', 'd', zk);
-        if strcmpi (speed, 'slow')  || (chnkr.npt < 4000 && ~strcmpi (speed, 'fast'))
+        if strcmpi (speed, 'slow')  || (chnkr.npt < 2500 && ~strcmpi (speed, 'fast'))
             t1 = tic;
             A = chunkermat(chnkr, Dk);   
             A = A + eye(chnkr.npt);
@@ -143,7 +144,7 @@ switch lower(func)
         else
             Dk = 2*kernel('helm', 'd', zk); 
 
-            if strcmpi (speed, 'slow') || (chnkr.npt < 4000 && ~strcmpi (speed, 'fast'))
+            if strcmpi (speed, 'slow') || (chnkr.npt < 2500 && ~strcmpi (speed, 'fast'))
                 
                 t1 = tic;
                 A = chunkermat(chnkr, Dk);    
@@ -183,6 +184,7 @@ switch lower(func)
                 opti = sum(opp(:));  
                 f = 1/opti;
                 timef = toc(t1);
+                fprintf('done computing function value, starting derivative eval\n');
                 
                 if nargout >= 2
                     t2 = tic;
@@ -190,6 +192,7 @@ switch lower(func)
                     choice0 = [];
                     choice0.corrections = true;
                     cormat = chunkermat(chnkr, Derk, choice0);
+                    fprintf('done computing chunkermat\n');
                     choice = [];
                     choice.forcesmooth = true;
                     choice.cormat = cormat;

@@ -263,7 +263,7 @@ switch lower(method)
                 % [g, derg, timef, timeder] =  fred_opti(newtguess, chnkr, func, obj);
                 newtguess = newtguess - val/derval;
                 [g, derg, timef, timeder] =  fred_opti(newtguess, chnkr, func, obj);
-                fprintf('  iterate = %d\n', newtguess);
+                fprintf('  iterate = %d + %d i\n', real(newtguess), imag(newtguess));
                 val = g;
                 derval = derg;
                 newtz(nit) = newtguess;

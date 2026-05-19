@@ -1,10 +1,11 @@
-%DEMO_FLAM
+% DEMO_FLAM
 %
 % We have wrappers to using the FLAM library for obtaining a fast-direct
 % solver for your system matrix. This is useful for larger scale problems.
 %
 % This demo calls the FLAM matrix builder and do a basic solve on a 
 % triangular chunkgraph
+%
 
 clearvars; close all;
 iseed = 8675309;

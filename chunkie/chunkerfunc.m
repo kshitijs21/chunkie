@@ -613,4 +613,4 @@ function [len] = chunklength(fcurve,a,b,xs,ws,nout,dermat)
     end
     dsdt = sqrt(sum(abs(out{2}).^2,1));
     len = dot(dsdt,ws)*(b-a)/2;
- end
+end

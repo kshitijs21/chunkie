@@ -1,5 +1,5 @@
-function [val,grad,hess,der3,der4,der5] = helmdiffgreen(k,src,targ,ifr2logr)
-%HELMDIFFGREEN evaluate the difference of the 
+function [val,grad,hess,der3,der4,der5, g0,g1,g21,g3,g4,g5] = helmdiffgreen(k,src,targ,ifr2logr)
+% HELMDIFFGREEN evaluate the difference of the 
 % Helmholtz Green function and the Laplace Green function
 % for the given sources and targets, i.e. 
 %

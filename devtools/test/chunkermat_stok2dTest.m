@@ -2,7 +2,7 @@
 % 
 % function chunkermat_stok2dTest0()
 
-%CHUNKERMAT_HELM2DTEST
+% CHUNKERMAT_HELM2DTEST
 %
 % test the matrix builder and do a basic solve
 
@@ -19,7 +19,7 @@ amp = 0.25;
 start = tic; chnkr = chunkerfunc(@(t) starfish(t,narms,amp),cparams,pref); 
 t1 = toc(start);
 
-fprintf('%5.2e s : time to build geo\n',t1)
+fprintf('%5.2e s : time to build geo\n',t1);
 
 % sources
 
@@ -37,16 +37,19 @@ ts = 0.0+2*pi*rand(nt,1);
 targets = starfish(ts,narms,amp);
 targets = targets.*repmat(rand(1,nt),2,1)*0.8;
 
-%plot(chnkr, 'r.'); hold on;
-%plot(targets(1,:), targets(2,:), 'kx')
-%axis equal
+plot(chnkr, 'r.'); hold on;
+plot(targets(1,:), targets(2,:), 'kx')
+hold on;
+plot(sources(1,:), sources(2,:), 'bo')
+axis equal
 
 mu = 1.3;
 kerns = kernel('stok', 'd', mu);
 
 % eval u on bdry
 
-targs = chnkr.r; targs = reshape(targs,2,chnkr.k*chnkr.nch);
+targs = chnkr.r; 
+targs = reshape(targs,2,chnkr.k*chnkr.nch);
 targstau = tangents(chnkr); 
 targstau = reshape(targstau,2,chnkr.k*chnkr.nch);
 
@@ -80,8 +83,11 @@ sys = -0.5*eye(size(D,1)) + D;
 
 sys = sys + normonesmat(chnkr)/sum(chnkr.wts(:));
 
-rhs = ubdry; rhs = rhs(:);
-start = tic; sol = gmres(sys,rhs,[],1e-14,100); t1 = toc(start);
+rhs = ubdry; 
+rhs = rhs(:);
+start = tic; 
+sol = gmres(sys,rhs,[],1e-14,100); 
+t1 = toc(start);
 
 fprintf('%5.2e s : time for dense gmres\n',t1)
 
@@ -91,8 +97,10 @@ opts.usesmooth=false;
 opts.verb=false;
 opts.forcefmm=true;
 start=tic; 
-Dsol = chunkerkerneval(chnkr,fkern,sol,targets,opts); 
+Dsol = chunkerkerneval(chnkr, fkern, sol, targets, opts); 
 t1 = toc(start);
+relerr = norm(utarg-Dsol,'fro')/(sqrt(chnkr.nch)*norm(utarg,'fro'));
+
 fprintf('%5.2e s : time to eval at targs (slow, adaptive routine)\n',t1)
 
 

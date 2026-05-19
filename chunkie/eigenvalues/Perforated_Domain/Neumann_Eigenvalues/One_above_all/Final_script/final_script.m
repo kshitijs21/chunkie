@@ -5,7 +5,7 @@ opts = [];
 % z0 = 3.449551391360910;  % initial guess corresponding to ll = 5 or number of hole = 68
 z0 = 3.449763720345;
 func = 'ir';
-method = 's';
+method = 'n';
 fprintf('Objective function = %s\n', func);
 fprintf('Method = %s\n', method);
 
@@ -20,7 +20,7 @@ for ii = 2:length(ll)
         fprintf('  Root = %d, fn value = %d\n', zero0, val0);
         it = valit(1,:);
         fnit = valit(2,:);
-        save(['Secant/' char(func) '_with_' num2str(nh) '_holes_and_initial_guess_' num2str(z0) '.mat'], 'zero0', 'val0', 'nit', 'it', "fnit", "timeit"); 
+        save(['Newton/' char(func) '_with_' num2str(nh) '_holes_and_initial_guess_' num2str(z0) '.mat'], 'zero0', 'val0', 'nit', 'it', "fnit", "timeit"); 
         z0 = real(zero0);
     end
     nh0 = nh;

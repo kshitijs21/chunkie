@@ -9,6 +9,6 @@ targ = targinfo.r(:,:);
 
 % single layer 
 if strcmpi(type,'s')
-  submat = chnk.bihar2d.green(k,src,targ);
+  submat = chnk.obihar2d.green(k,src,targ);
 end
 
